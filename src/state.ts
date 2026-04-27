@@ -1,0 +1,27 @@
+import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { dirname } from "node:path";
+import { homedir } from "node:os";
+
+export interface SyncState {
+  lastSync: string | null;
+}
+
+export function defaultStatePath(): string {
+  return process.env["LEDGERMEM_STATE_PATH"] ?? `${homedir()}/.ledgermem/readwise.json`;
+}
+
+export async function loadState(path: string = defaultStatePath()): Promise<SyncState> {
+  try {
+    const raw = await readFile(path, "utf8");
+    const parsed = JSON.parse(raw) as Partial<SyncState>;
+    return { lastSync: typeof parsed.lastSync === "string" ? parsed.lastSync : null };
+  } catch (err) {
+    if ((err as NodeJS.ErrnoException).code === "ENOENT") return { lastSync: null };
+    throw err;
+  }
+}
+
+export async function saveState(state: SyncState, path: string = defaultStatePath()): Promise<void> {
+  await mkdir(dirname(path), { recursive: true });
+  await writeFile(path, JSON.stringify(state, null, 2), "utf8");
+}
