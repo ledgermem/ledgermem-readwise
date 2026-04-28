@@ -40,6 +40,9 @@ export async function sync(opts: SyncOptions): Promise<SyncResult> {
 
   let imported = 0;
   let books = 0;
+  // Track the most recent highlight timestamp seen so we can advance the cursor
+  // even if the run is interrupted. Falls back to start-of-run timestamp.
+  let highWaterMark: string | null = state.lastSync;
   for await (const book of fetchHighlights(
     { token: opts.readwiseToken, fetchImpl: opts.fetchImpl },
     state.lastSync,
@@ -62,6 +65,12 @@ export async function sync(opts: SyncOptions): Promise<SyncResult> {
         },
       });
       imported += 1;
+      const ts = h.updated ?? h.highlighted_at ?? null;
+      if (ts && (!highWaterMark || ts > highWaterMark)) highWaterMark = ts;
+    }
+    // Persist after each book so a mid-run failure doesn't replay all imports.
+    if (highWaterMark) {
+      await saveState({ lastSync: highWaterMark }, opts.statePath);
     }
   }
 
