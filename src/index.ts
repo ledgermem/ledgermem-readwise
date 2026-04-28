@@ -49,6 +49,10 @@ export async function sync(opts: SyncOptions): Promise<SyncResult> {
   )) {
     books += 1;
     for (const h of book.highlights) {
+      // Skip highlights whose text was deleted on the source (Readwise sets
+      // text to empty when a highlight is deleted but still surfaces it in
+      // export). Empty text adds no signal to retrieval.
+      if (!h.text || h.text.trim().length === 0) continue;
       await client.add(buildContent(book, h), {
         metadata: {
           source: "readwise",

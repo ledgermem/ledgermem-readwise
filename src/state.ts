@@ -23,5 +23,10 @@ export async function loadState(path: string = defaultStatePath()): Promise<Sync
 
 export async function saveState(state: SyncState, path: string = defaultStatePath()): Promise<void> {
   await mkdir(dirname(path), { recursive: true });
-  await writeFile(path, JSON.stringify(state, null, 2), "utf8");
+  // Atomic write — fs/promises rename is atomic on POSIX. Prevents partial
+  // JSON if the process is killed mid-write.
+  const tmp = `${path}.${process.pid}.tmp`;
+  await writeFile(tmp, JSON.stringify(state, null, 2), "utf8");
+  const { rename } = await import("node:fs/promises");
+  await rename(tmp, path);
 }
