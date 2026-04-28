@@ -70,7 +70,25 @@ export async function sync(opts: SyncOptions): Promise<SyncResult> {
       });
       imported += 1;
       const ts = h.updated ?? h.highlighted_at ?? null;
-      if (ts && (!highWaterMark || ts > highWaterMark)) highWaterMark = ts;
+      // String comparison only works when both timestamps share the same
+      // representation; Readwise emits a mix of `2024-01-01T00:00:00Z` and
+      // `2024-01-01T00:00:00.123Z`, where lexical compare gets the order
+      // wrong at the dot vs `Z` boundary. Compare numerically via
+      // Date.parse and fall back to string compare only if a timestamp is
+      // unparseable (so we don't regress on truly malformed input).
+      if (ts) {
+        if (!highWaterMark) {
+          highWaterMark = ts;
+        } else {
+          const a = Date.parse(ts);
+          const b = Date.parse(highWaterMark);
+          if (Number.isFinite(a) && Number.isFinite(b)) {
+            if (a > b) highWaterMark = ts;
+          } else if (ts > highWaterMark) {
+            highWaterMark = ts;
+          }
+        }
+      }
     }
     // Persist after each book so a mid-run failure doesn't replay all imports.
     if (highWaterMark) {
@@ -78,7 +96,12 @@ export async function sync(opts: SyncOptions): Promise<SyncResult> {
     }
   }
 
-  const stamp = (opts.now?.() ?? new Date()).toISOString();
+  // Persist the highest highlight timestamp we actually saw, NOT wall-clock
+  // "now". Readwise's `updatedAfter` cursor must be anchored to the data we
+  // read; advancing to local now skips any highlights created between the
+  // request's server-side snapshot and now (and amplifies clock-skew when
+  // the worker host runs ahead of Readwise's authoritative time).
+  const stamp = highWaterMark ?? (opts.now?.() ?? new Date()).toISOString();
   await saveState({ lastSync: stamp }, opts.statePath);
   return { imported, books, lastSync: stamp };
 }
