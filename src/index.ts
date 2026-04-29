@@ -1,4 +1,4 @@
-import { LedgerMem } from "@ledgermem/memory";
+import { Mnemo } from "@getmnemo/memory";
 import { fetchHighlights, type FetchFn, type ReadwiseBook, type ReadwiseHighlight } from "./readwise.js";
 import { loadState, saveState, type SyncState } from "./state.js";
 
@@ -31,12 +31,12 @@ export function buildContent(book: ReadwiseBook, h: ReadwiseHighlight): string {
 
 export async function sync(opts: SyncOptions): Promise<SyncResult> {
   if (!opts.readwiseToken) throw new Error("READWISE_TOKEN is required");
-  if (!opts.apiKey) throw new Error("LEDGERMEM_API_KEY is required");
-  if (!opts.workspaceId) throw new Error("LEDGERMEM_WORKSPACE_ID is required");
+  if (!opts.apiKey) throw new Error("GETMNEMO_API_KEY is required");
+  if (!opts.workspaceId) throw new Error("GETMNEMO_WORKSPACE_ID is required");
 
   const state: SyncState = await loadState(opts.statePath);
   const client: MemoryClient =
-    opts.client ?? new LedgerMem({ apiKey: opts.apiKey, workspaceId: opts.workspaceId });
+    opts.client ?? new Mnemo({ apiKey: opts.apiKey, workspaceId: opts.workspaceId });
 
   let imported = 0;
   let books = 0;

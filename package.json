@@ -1,11 +1,11 @@
 {
-  "name": "@ledgermem/readwise",
+  "name": "@getmnemo/readwise",
   "version": "0.1.0",
-  "description": "Pull Readwise highlights into LedgerMem on a schedule.",
+  "description": "Pull Readwise highlights into Mnemo on a schedule.",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
-    "ledgermem-readwise": "dist/cli.js"
+    "getmnemo-readwise": "dist/cli.js"
   },
   "scripts": {
     "build": "tsc",
@@ -16,11 +16,11 @@
     "typecheck": "tsc --noEmit"
   },
   "files": ["dist"],
-  "keywords": ["readwise", "highlights", "ledgermem", "memory"],
-  "author": "LedgerMem <founders@proofly.dev>",
+  "keywords": ["readwise", "highlights", "getmnemo", "memory"],
+  "author": "Mnemo <founders@getmnemo.xyz>",
   "license": "MIT",
   "dependencies": {
-    "@ledgermem/memory": "^0.1.0",
+    "@getmnemo/memory": "^0.1.0",
     "commander": "^12.0.0"
   },
   "devDependencies": {

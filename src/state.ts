@@ -7,7 +7,7 @@ export interface SyncState {
 }
 
 export function defaultStatePath(): string {
-  return process.env["LEDGERMEM_STATE_PATH"] ?? `${homedir()}/.ledgermem/readwise.json`;
+  return process.env["GETMNEMO_STATE_PATH"] ?? `${homedir()}/.getmnemo/readwise.json`;
 }
 
 export async function loadState(path: string = defaultStatePath()): Promise<SyncState> {

@@ -4,8 +4,8 @@ import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { sync } from "./index.js";
 
-vi.mock("@ledgermem/memory", () => ({
-  LedgerMem: vi.fn().mockImplementation(() => ({ add: vi.fn() })),
+vi.mock("@getmnemo/memory", () => ({
+  Mnemo: vi.fn().mockImplementation(() => ({ add: vi.fn() })),
 }));
 
 function makeFetch(pages: unknown[]): typeof fetch {
@@ -116,10 +116,10 @@ describe("sync", () => {
     ).rejects.toThrow(/READWISE_TOKEN/);
     await expect(
       sync({ readwiseToken: "r", apiKey: "", workspaceId: "w", statePath: join(tmpDir, "s.json") }),
-    ).rejects.toThrow(/LEDGERMEM_API_KEY/);
+    ).rejects.toThrow(/GETMNEMO_API_KEY/);
     await expect(
       sync({ readwiseToken: "r", apiKey: "k", workspaceId: "", statePath: join(tmpDir, "s.json") }),
-    ).rejects.toThrow(/LEDGERMEM_WORKSPACE_ID/);
+    ).rejects.toThrow(/GETMNEMO_WORKSPACE_ID/);
   });
 
   it("propagates Readwise API errors", async () => {
