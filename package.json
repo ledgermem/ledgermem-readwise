@@ -1,5 +1,5 @@
 {
-  "name": "@getmnemo/readwise",
+  "name": "@mnemo/readwise",
   "version": "0.1.0",
   "description": "Pull Readwise highlights into Mnemo on a schedule.",
   "type": "module",
@@ -20,7 +20,7 @@
   "author": "Mnemo <founders@getmnemo.xyz>",
   "license": "MIT",
   "dependencies": {
-    "@getmnemo/memory": "^0.1.0",
+    "@mnemo/memory": "^0.1.0",
     "commander": "^12.0.0"
   },
   "devDependencies": {

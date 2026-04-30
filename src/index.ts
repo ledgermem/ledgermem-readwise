@@ -1,4 +1,4 @@
-import { Mnemo } from "@getmnemo/memory";
+import { Mnemo } from "@mnemo/memory";
 import { fetchHighlights, type FetchFn, type ReadwiseBook, type ReadwiseHighlight } from "./readwise.js";
 import { loadState, saveState, type SyncState } from "./state.js";
 

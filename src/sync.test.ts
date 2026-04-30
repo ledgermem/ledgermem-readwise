@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { sync } from "./index.js";
 
-vi.mock("@getmnemo/memory", () => ({
+vi.mock("@mnemo/memory", () => ({
   Mnemo: vi.fn().mockImplementation(() => ({ add: vi.fn() })),
 }));
 
